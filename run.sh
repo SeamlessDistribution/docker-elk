@@ -13,22 +13,25 @@ if [ -n "$ES_NO_DATA" ]; then
     sed -ri 's|node.data: true|node.data: false|' /elasticsearch/config/elasticsearch.yml
 fi
 
-if [ -n "$REDIS_HOST" ]; then
-    sed -ri "s|__REDIS_HOST__|${REDIS_HOST}|" /logstash/config/logstash.conf
-else
-    sed -ri "s|__REDIS_HOST__|localhost|" /logstash/config/logstash.conf
+if [ -n "$ES_DATA_ONLY" ]; then
+    sed -ri 's|node.master: true|node.master: false|' /elasticsearch/config/elasticsearch.yml
 fi
 
-if [ -n "$ELASTICSEARCH_HOST" ]; then
-    sed -ri "s|__ELASTICSEARCH_HOST__|${ELASTICSEARCH_HOST}|" /logstash/config/logstash.conf
-else
-    sed -ri "s|__ELASTICSEARCH_HOST__|localhost|" /logstash/config/logstash.conf
-fi
+export REDIS_HOST=${REDIS_HOST:-localhost}
+
+sed -ri "s|__REDIS_HOST__|${REDIS_HOST}|" /logstash/config/logstash.conf
 
 
+export ELASTICSEARCH_HOST=${ELASTICSEARCH_HOST:-localhost}
+export ELASTICSEARCH_PORT=${ELASTICSEARCH_PORT:-9200}
+
+sed -ri "s|__ELASTICSEARCH_HOST__|${ELASTICSEARCH_HOST}|" /logstash/config/logstash.conf
+sed -i "s/^elasticsearch_url: .*$/elasticsearch_url: \"http:\/\/${ELASTICSEARCH_HOST}:${ELASTICSEARCH_PORT}\"/g" /opt/kibana/config/kibana.yml
 
 if [ -z "$1" ]; then
     /logstash/bin/logstash -f /logstash/config/   &
+
+    /bin/su kibana -s /bin/bash -c '/opt/kibana/bin/kibana' &
 
     /elasticsearch/bin/elasticsearch
 else
@@ -38,6 +41,9 @@ else
             ;;
         logstash)
             /logstash/bin/logstash -f /logstash/config/
+            ;;
+        kibana)
+            /bin/su kibana -s /bin/bash -c '/opt/kibana/bin/kibana'
             ;;
         shell)
             /bin/bash
