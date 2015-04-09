@@ -5,7 +5,7 @@ ENV LOGSTASH_VERSION 1.4.2
 ENV ELASTICSEARCH_VERSION 1.3.2
 ENV BIGDESK_VERSION 2.4.0
 ENV KIBANA_VERSION 3.1.0
-ENV CLOUDAWS_VERSION 2.3.0
+#ENV CLOUDAWS_VERSION 2.3.0
 
 RUN curl --silent --location --retry 3 --cacert /etc/ssl/certs/GeoTrust_Global_CA.crt \
     -O https://download.elasticsearch.org/logstash/logstash/logstash-$LOGSTASH_VERSION.tar.gz && \
@@ -30,11 +30,11 @@ RUN \
 RUN /elasticsearch/bin/plugin -install lukas-vlcek/bigdesk/$BIGDESK_VERSION
 RUN /elasticsearch/bin/plugin -install mobz/elasticsearch-head
 RUN /elasticsearch/bin/plugin -install royrusso/elasticsearch-HQ
-RUN /elasticsearch/bin/plugin --install elasticsearch/elasticsearch-cloud-aws/$CLOUDAWS_VERSION
+#RUN /elasticsearch/bin/plugin --install elasticsearch/elasticsearch-cloud-aws/$CLOUDAWS_VERSION
 
 ADD elasticsearch_config /elasticsearch/config
 
 ADD run.sh /run.sh
+RUN chmod +x /run.sh
 
-ENTRYPOINT ["/bin/bash"]
-CMD ["/run.sh"]
+ENTRYPOINT ["/run.sh"]

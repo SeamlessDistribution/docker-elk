@@ -1,21 +1,7 @@
 node.master: true
 discovery.zen.minimum_master_nodes: 2
 node.data: true
+discovery.zen.ping.unicast.hosts: ["__M1__", "__M2__", "__M3__"]
 path:
         data: /data/elasticsearch
         logs: /data/elasticsearch/logs
-
-discovery:
-    type: ec2
-
-    ec2:
-        tag:
-            env: __TAG_ENV__
-
-cloud:
-    aws:
-        access_key: __AWS_ACCESS_KEY__
-        secret_key: __AWS_SECRET_KEY__
-
-        region:
-            ec2: __AWS_REGION__
