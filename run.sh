@@ -7,7 +7,9 @@ sed -ri "s|__AWS_REGION__|${AWS_REGION}|" /elasticsearch/config/elasticsearch.ym
 
 sed -ri "s|__REDIS_HOST__|${REDIS_HOST}|" /logstash/config/logstash.conf
 
-/elasticsearch/bin/elasticsearch &
 
 
-/logstash/bin/logstash -f /logstash/config/
+
+/logstash/bin/logstash -f /logstash/config/   &
+
+/elasticsearch/bin/elasticsearch
